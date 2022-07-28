@@ -1,0 +1,64 @@
+version: '3'
+
+services: 
+
+  nightmare :
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: main
+    volumes: 
+      - .:/Nightmare
+      - night_static_volume:/Nightmare/staticfiles
+      - night_dynamic_volume:/Nightmare/media
+    restart: always
+    command: sh -c "python manage.py migrate && python manage.py initadmin && gunicorn --chdir setup --bind :8000 setup.wsgi:application"
+    networks: 
+      - night_network
+      - nginx_network
+    depends_on: 
+      - db
+
+  db :
+    container_name: postgresql_db
+    image: postgres
+    volumes: 
+      - night_postgresql:/var/lib/postgresql/data
+    restart: always
+    environment: 
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    networks: 
+      - night_network
+
+  nginx:
+    container_name: nginx
+    build: 
+      context: .
+      dockerfile: ./configuration/nginx/Dockerfile
+    ports: 
+      - "80:80"
+    volumes: 
+      - night_static_volume:/Nightmare/staticfiles
+      - night_dynamic_volume:/Nightmare/media
+    networks: 
+      - nginx_network
+    depends_on: 
+      - nightmare
+
+volumes: 
+  night_postgresql :
+    external: true
+  night_static_volume :
+    external: true
+  night_dynamic_volume :
+    external: true
+
+networks: 
+  night_network :
+    external: true
+  nginx_network :
+    external: true
+
+

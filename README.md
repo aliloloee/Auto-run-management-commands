@@ -27,10 +27,20 @@
 <h3>Running this project :</h3>
 
 <ol>
-<li>clone the project</li>
+<li>clone the repository</li>
 <li>open the terminal and cd to directory of the project</li>
+
+<li>run these commands : </li>
+<ul>
+<li><code>docker volume create night_postgresql</code></li>
+<li><code>docker volume create night_static_volume</code></li>
+<li><code>docker volume create night_dynamic_volume</code></li>
+<li><code>docker network create night_network</code></li>
+<li><code>docker network create nginx_network</code></li>
+</ul>
+
 <li>run <code>docker-compose up -d</code></li>
-<li>with <code>docker ps -a</code> check the health of your containers</li>
+<li>run <code>docker ps -a</code> to check the health of your containers</li>
 <li>go to your browser, to <em><code>0.0.0.0:80/admin</code></em></li>
 <li>Check out the values of <em><code>DJANGO_SUPERUSER_USERNAME</code></em> and <em><code>DJANGO_SUPERUSER_PASSWORD</code></em> in <em><code>.env</code></em> file, and login to admin-panel with them</li>
 </ol>
